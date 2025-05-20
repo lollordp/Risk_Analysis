@@ -1,113 +1,119 @@
-⚠️ Risk Analysis Project
-Overview
-This project provides a comprehensive evaluation of market risk through Value-at-Risk (VaR) modeling, portfolio construction, and bond risk analysis. It investigates both the statistical properties of returns and the effectiveness of various VaR estimation techniques. The analysis culminates in constructing optimized portfolios and assessing the risk of a fixed-income instrument using Monte Carlo simulations and analytical approximations.
+# ⚠️ Risk Analysis Project
 
-📂 Project Structure
-The project is divided into three core components:
+## Overview
+This project explores financial risk assessment through Value-at-Risk (VaR) estimation, portfolio construction, and fixed-income analysis. It combines top-down and bottom-up VaR models, applies robust portfolio optimization techniques, and evaluates risk in a bond instrument using simulation and analytical tools.
 
-VaR Forecasting Models: Comparison of six different VaR estimation techniques on equity portfolio returns.
+The project consists of:
 
-Portfolio Construction & Evaluation: Implementation and analysis of three portfolio strategies (Risk Parity, Maximum Diversification, Equally Weighted).
+- Multiple VaR estimation models, both parametric and non-parametric
+- Construction and evaluation of three portfolio strategies
+- Bond risk analysis using Delta, Delta-Gamma, and full revaluation methods
 
-Bond Risk Analysis: VaR and Expected Shortfall estimation for a bond using analytical and simulation-based approaches.
+---
 
-📅 Data & Instruments
-Asset Class: Equities (AAPL, MSFT, IBM, NVDA, GOOGL, AMZN)
+## Project Setup
 
-Bond: 10-year maturity, 5% annual coupon, priced at 99
+### Data
+- Time Frame: 10 years of daily data
+- Assets: AAPL, MSFT, IBM, NVDA, GOOGL, AMZN
+- Fixed-Income: 10-year bond with 5% annual coupon, priced at 99
+- Yield Volatility: Gaussian i.i.d. process with σ = 0.006
 
-Time Horizon: 10 years of daily data
+---
 
-Risk-Free Rate: Assumed zero for Sharpe Ratio calculations
+## Tools & Technologies
+- **Python**
+- NumPy, Pandas for numerical and data processing
+- Matplotlib, Seaborn for visualization
+- Statsmodels, SciPy for distribution tests and fitting
+- Optimization libraries for portfolio construction
+- Monte Carlo simulation for VaR and ES
 
-YTM Model: Gaussian i.i.d. process with σ = 0.006
+---
 
-🧰 Tools & Technologies
-Python
+## Methodology
 
-NumPy, Pandas for data analysis
+### 📊 1. VaR Forecasting Models
+Implemented and compared six models:
 
-Matplotlib, Seaborn for visualizations
+- **Top-down Normal (AP1_VaR)**: Rolling mean & std. with Gaussian assumption  
+- **Top-down t-Distribution (AP1t_VaR)**: Captures fat tails  
+- **Delta-Gamma (AP1B_VaR)**: Uses Cornish-Fisher expansion for skewness & kurtosis  
+- **Non-Parametric Bootstrap (AP2_VaR)**: Empirical, data-driven VaR  
+- **Monte Carlo with EWMA (AP3_VaR)**: 2000 simulations, log-returns  
+- **Analytical Taylor Approximation (AP4_VaR)**: Bottom-up RiskMetrics with λ=0.94
 
-SciPy, Statsmodels for statistical testing
+Each model was evaluated via:
 
-Optimization Libraries for portfolio weights
+- Violation rates at 90% and 99% confidence levels  
+- Kupiec’s Unconditional Coverage Test  
+- Christoffersen’s Conditional Coverage Test
 
-Monte Carlo Simulations for VaR & ES estimation
+### 📈 2. Portfolio Construction
+Constructed three portfolio strategies using the above asset universe:
 
-🧪 Methodology
-📊 1. VaR Forecasting Models
-Tested six approaches on a multi-asset portfolio:
+- **Risk Parity Portfolio (RPP)**: Equal risk contribution via Component VaR  
+- **Maximum Diversification Portfolio (MDP)**: Maximizes diversification ratio  
+- **Equally Weighted Portfolio (EWP)**: Simple benchmark strategy
 
-Top-down Normal VaR (AP1)
+### 🔍 3. Performance Metrics
+Assessed portfolios based on:
 
-Top-down t-Distribution VaR (AP1t)
+| Metric                | RPP      | MDP      | EWP      |
+|----------------------|----------|----------|----------|
+| Sharpe Ratio         | 0.92     | 0.94     | 0.97     |
+| Max Drawdown         | -0.70    | -6.55    | -19.29   |
+| VaR Violations (95%) | 106–121  | 96–106   | 121–126  |
+| Skewness             | -0.52    | -0.55    | -0.47    |
+| Excess Kurtosis      | 6.59     | 6.69     | 5.53     |
 
-Delta-Gamma VaR using Cornish-Fisher Expansion (AP1B)
+📉 All portfolios showed non-normal return distributions based on:
+- Shapiro-Wilk Test
+- Kolmogorov-Smirnov Test
+- Jarque-Bera Test  
+→ Parametric VaR models may underestimate tail risks.
 
-Non-Parametric Bootstrap VaR (AP2)
+### 💵 4. Bond Risk Analysis
+Assessed a fixed-income instrument using six VaR estimation methods (99% confidence):
 
-Monte Carlo Simulation with EWMA Covariance (AP3)
+- **Exact Revaluation**
+- **Delta Approximation**
+- **Delta-Gamma Approximation**
+- **Monte Carlo (Delta)**
+- **Monte Carlo (Delta-Gamma)**
+- **Monte Carlo (Full Revaluation)**
 
-Analytical Taylor Approximation with RiskMetrics (AP4)
+Key outcomes:
 
-Performance was evaluated using:
+- Probability of 10% bond price drop in 30 days: **~34.64%**
+- Expected Shortfall (99%) over 90 days (MC full revaluation): **£61.46**
+- Delta-Gamma gives good short-term accuracy, but underestimates long-term risk
 
-VaR violation rate (90% and 99%)
+---
 
-Kupiec's Unconditional Coverage Test
+## Results Summary
 
-Christoffersen's Conditional Coverage Test
+### ✅ Best performing model (VaR 90%):  
+**Bottom-up Monte Carlo with EWMA** — strong unconditional and conditional coverage
 
-📈 2. Portfolio Construction & Risk Metrics
-Built and evaluated three portfolio strategies:
+### ✅ Best performing portfolio:  
+**Maximum Diversification Portfolio** — highest Sharpe, but higher drawdowns
 
-Risk Parity Portfolio (RPP) using Component VaR
+### ✅ Most stable strategy:  
+**Risk Parity Portfolio** — better downside control and fewer VaR violations
 
-Maximum Diversification Portfolio (MDP) optimizing diversification ratio
+---
 
-Equally Weighted Portfolio (EWP) as benchmark
+## Conclusion
+- **Parametric models** are efficient but suffer under non-normal return conditions
+- **Bootstrapping and simulations** better capture fat tails and volatility clusters
+- **Risk Parity** balances returns and risk better than naïve equal-weighting
+- **Bond VaR** estimation benefits from full revaluation and non-linear risk modeling
 
-Performance metrics:
+---
 
-Metric	RPP	MDP	EWP
-Sharpe Ratio	0.92	0.94	0.97
-Max Drawdown	-0.70	-6.55	-19.29
-VaR Violations (95%)	106–121	96–106	121–126
-Skewness	-0.52	-0.55	-0.47
-Excess Kurtosis	6.59	6.69	5.53
+## 📬 Contact
+**Lorenzo Rossi**  
+📧 Email: lollordp@gmail.com  
+🔗 LinkedIn: [Lorenzo Rossi](https://www.linkedin.com/in/lorenzo-rossi-profile)
 
-All return series rejected normality assumptions based on Shapiro-Wilk, K-S, and Jarque-Bera tests.
-
-💵 3. Bond Risk Analysis
-Computed 99% VaR and Expected Shortfall over 1 to 90 days for a bond using:
-
-Exact revaluation
-
-Delta and Delta-Gamma approximations
-
-Monte Carlo simulations (10,000 paths)
-
-Key insights:
-
-Delta-Gamma approximation tracks full revaluation well for short horizons but underestimates risk at longer durations.
-
-Probability of a 10% drop in bond price within 30 days: ~34.6%
-
-ES (99%) over 90 days: £61.46
-
-📌 Key Takeaways
-Non-normal return distributions invalidate normal-based VaR models.
-
-Risk Parity Portfolio offers stable performance and lower drawdowns, ideal for risk-averse investors.
-
-Maximum Diversification delivers best Sharpe Ratio but higher downside risk.
-
-Bootstrapping and Monte Carlo methods better capture fat tails and volatility clustering.
-
-Analytical bond risk approximations become unreliable for longer horizons or larger YTM shifts.
-
-📬 Contact
-Lorenzo Rossi
-📧 Email: lollordp@gmail.com
-🔗 LinkedIn: Lorenzo Rossi
